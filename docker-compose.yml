@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  mysql:
+    build:
+      context: "./setup/docker/mysql"
+    container_name: 'mysql'
+    restart: 'always'
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./logs/mysql:/var/log/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: smdradmin
+      MYSQL_DATABASE: base
+      MYSQL_USER: smdr
+      MYSQL_PASSWORD: smdr
+    networks:
+     - default
+  mqtt:
+    build:
+      context: "./setup/docker/mosquitto"
+    container_name: 'mosquitto'
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./setup/docker/mosquitto/config:/mosquitto/config/mosquitto.conf
+      - ./data/mosquitto-data:/mosquitto/data
+      - ./logs/mosquitto-logs:/mosquitto/logs
+    networks:
+     - default
+networks:
+  default:
+    external:
+      name: my-pre-existing-network
